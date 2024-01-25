@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">TODOlistapp</string>
+    <string name="add_task_button_title">Add task</string>
+    <string name="todo_list_title_text" translatable="false">TODO List</string>
+    <string name="enter_task_name_on_plain_text_view">Enter task</string>
+    <string name="save">Save</string>
+    <string name="enter_task_time_on_button">Enter time</string>
+    <string name="enter_task_date_on_button">Enter date</string>
+    <string name="enter_task_desc_on_plain_text">Add description</string>
+    <!-- TODO: Remove or change this placeholder text -->
+</resources>

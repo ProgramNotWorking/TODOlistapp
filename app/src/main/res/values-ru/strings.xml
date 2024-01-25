@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">TODOlistapp</string>
+    <string name="add_task_button_title">Добавить задачу</string>
+    <string name="enter_task_name_on_plain_text_view">Напишите задание</string>
+    <string name="save">Сохранить</string>
+    <string name="enter_task_time_on_button">Установите время</string>
+    <string name="enter_task_date_on_button">Установите дату</string>
+    <string name="enter_task_desc_on_plain_text">Добавьте описание</string>
+</resources>
