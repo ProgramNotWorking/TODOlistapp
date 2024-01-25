@@ -14,40 +14,37 @@ import androidx.core.content.ContextCompat
 import com.example.todolistapp.constants.IntentConstants
 import com.example.todolistapp.databinding.ActivityTaskEditBinding
 import java.util.Calendar
+import kotlin.properties.Delegates
 
 class TaskEditActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityTaskEditBinding
+    private var isEdit: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityTaskEditBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        isEdit = intent.getBooleanExtra(IntentConstants.IS_EDIT, false)
         onTouchCloseKeyboard()
 
         binding.apply {
 
-            checkOnEdit(intent.getBooleanExtra(IntentConstants.IS_EDIT, false))
+            checkOnEdit()
             // When open it second time, desc field show us date, not desc
 
-            editTaskTimeButton.setOnClickListener {
-                callTimePickerDialog()
-            }
+            editTaskTimeButton.setOnClickListener { callTimePickerDialog() }
 
-            editTaskDateButton.setOnClickListener {
-                callDatePickerDialog()
-            }
+            editTaskDateButton.setOnClickListener { callDatePickerDialog() }
 
-            saveTaskButton.setOnClickListener {
-                onSave()
-            }
+            saveTaskButton.setOnClickListener { onSave() }
 
         }
 
     }
 
-    private fun checkOnEdit(isEdit: Boolean) = with(binding) {
+    private fun checkOnEdit() = with(binding) {
         if (isEdit) {
             editTaskNamePlainText.setText(intent.getStringExtra(IntentConstants.TASK).toString())
             editTaskTimeButton.text = intent.getStringExtra(IntentConstants.TIME).toString()
@@ -93,6 +90,7 @@ class TaskEditActivity : AppCompatActivity() {
         intent.putExtra(IntentConstants.TIME, data["time"])
         intent.putExtra(IntentConstants.DATE, data["date"])
         intent.putExtra(IntentConstants.DESC, data["desc"])
+        intent.putExtra(IntentConstants.IS_EDIT, isEdit)
 
         setResult(RESULT_OK, intent)
         finish()

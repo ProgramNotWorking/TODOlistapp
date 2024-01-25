@@ -11,11 +11,17 @@ class DatabaseManager(context: Context) {
     private val helper = DatabaseHelper(context)
     private var db: SQLiteDatabase? = null
 
-    fun open() {
+    fun save(tasksList: MutableList<Task>) {
+        open()
+        repopulateDatabase(tasksList)
+        close()
+    }
+
+    private fun open() {
         db = helper.writableDatabase
     }
 
-    fun close() {
+    private fun close() {
         helper.close()
     }
 
@@ -23,7 +29,7 @@ class DatabaseManager(context: Context) {
         db?.delete(DatabaseNames.TABLE_NAME, null, null)
     }
 
-    fun repopulateDatabase(tasksList: MutableList<Task>?) {
+    private fun repopulateDatabase(tasksList: MutableList<Task>?) {
         db?.beginTransaction()
         try {
             db?.delete(DatabaseNames.TABLE_NAME, null, null)
