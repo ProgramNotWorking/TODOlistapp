@@ -14,7 +14,7 @@ class TaskAdapter(
     private val onEditListener: OnEditListener
 ) : RecyclerView.Adapter<TaskAdapter.TaskHolder>() {
 
-    private val tasksList = mutableListOf<Task>()
+    val tasksList = mutableListOf<Task>()
     var lastClickedPosition = -1
     var lastClickTime = 0L
 

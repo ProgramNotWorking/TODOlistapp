@@ -9,6 +9,7 @@ import android.os.Vibrator
 import android.view.GestureDetector
 import android.view.LayoutInflater
 import android.view.MotionEvent
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.ActivityResultLauncher
@@ -27,10 +28,11 @@ class MainActivity : ComponentActivity(), TaskAdapter.OnEditListener {
 
     private lateinit var editTaskInfoLauncher: ActivityResultLauncher<Intent>
     private val adapter = TaskAdapter(this@MainActivity)
+
     private var changebleTaskPos = -1
 
     private val db = DatabaseManager(this)
-    private var tasksList = mutableListOf<Task>() // Need do something with that thing
+    // private var tasksList = mutableListOf<Task>() // Need do something with that thing
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,6 +51,42 @@ class MainActivity : ComponentActivity(), TaskAdapter.OnEditListener {
                 intent.putExtra(IntentConstants.IS_EDIT, false)
                 editTaskInfoLauncher.launch(intent)
             }
+
+            itemsListRecyclerView.addOnItemTouchListener(object : RecyclerView.OnItemTouchListener {
+                private val gestureDetector = GestureDetectorCompat(
+                    this@MainActivity, object : GestureDetector.SimpleOnGestureListener() {
+                        override fun onSingleTapConfirmed(e: MotionEvent): Boolean {
+                            val view = itemsListRecyclerView.findChildViewUnder(e.x, e.y)
+
+                            if (view != null) {
+                                val position = itemsListRecyclerView.getChildAdapterPosition(view)
+
+                                val intent = Intent(this@MainActivity, TaskEditActivity::class.java)
+                                intent.putExtra(IntentConstants.TASK, adapter.tasksList[position].taskName)
+                                intent.putExtra(IntentConstants.TIME, adapter.tasksList[position].taskTime)
+                                intent.putExtra(IntentConstants.DATE, adapter.tasksList[position].taskDate)
+                                intent.putExtra(IntentConstants.DESC, adapter.tasksList[position].taskDescription)
+                                intent.putExtra(IntentConstants.IS_EDIT, true)
+
+                                changebleTaskPos = adapter.getTaskPos(adapter.tasksList[position])
+
+                                editTaskInfoLauncher.launch(intent)
+                            }
+
+                            return super.onSingleTapConfirmed(e)
+                        }
+                    }
+                )
+
+                override fun onInterceptTouchEvent(rv: RecyclerView, e: MotionEvent): Boolean {
+                    gestureDetector.onTouchEvent(e)
+                    return false
+                }
+
+                override fun onTouchEvent(rv: RecyclerView, e: MotionEvent) {}
+
+                override fun onRequestDisallowInterceptTouchEvent(disallowIntercept: Boolean) {}
+            })
 
             editTaskInfoLauncher =
                 registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
@@ -83,7 +121,7 @@ class MainActivity : ComponentActivity(), TaskAdapter.OnEditListener {
     override fun onStop() {
         super.onStop()
 
-        db.save(tasksList)
+        // db.save(tasksList)
     }
 
     private fun setOnDeletingListener() = with(binding) {
@@ -100,8 +138,12 @@ class MainActivity : ComponentActivity(), TaskAdapter.OnEditListener {
                             val currentTime = System.currentTimeMillis()
                             val elapsedTime = currentTime - adapter.lastClickTime
 
-                            if (position == adapter.lastClickedPosition && elapsedTime >= 1500) {
+                            if (position == adapter.lastClickedPosition && elapsedTime >= 2000) {
                                 adapter.deleteTask(position)
+
+                                Toast.makeText(
+                                    this@MainActivity, DELETED, Toast.LENGTH_LONG
+                                ).show()
 
                                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                                     vibrator.vibrate(VibrationEffect.createOneShot(
@@ -142,6 +184,10 @@ class MainActivity : ComponentActivity(), TaskAdapter.OnEditListener {
         changebleTaskPos = adapter.getTaskPos(task)
 
         editTaskInfoLauncher.launch(intent)
+    }
+
+    companion object {
+        private var DELETED = R.string.deleted
     }
 
 }

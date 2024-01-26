@@ -7,5 +7,6 @@
     <string name="enter_task_time_on_button">Enter time</string>
     <string name="enter_task_date_on_button">Enter date</string>
     <string name="enter_task_desc_on_plain_text">Add description</string>
+    <string name="deleted">Deleted</string>
     <!-- TODO: Remove or change this placeholder text -->
 </resources>
